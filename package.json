@@ -1,0 +1,25 @@
+{
+  "name": "shopping-cart",
+  "version": "1.0.0",
+  "description": "Shopping Cart Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MShinControl/shopping-cart.git"
+  },
+  "author": "Mark Shin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MShinControl/shopping-cart/issues"
+  },
+  "homepage": "https://github.com/MShinControl/shopping-cart#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
+  }
+}
