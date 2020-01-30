@@ -4,7 +4,7 @@
   "description": "Shopping Cart Application",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/server.js",
+    "start": "nodemon server/start.js",
     "test": "jest --watch"
   },
   "repository": {
@@ -22,7 +22,9 @@
     "nodemon": "^2.0.2"
   },
   "devDependencies": {
+    "cors": "^2.8.5",
     "jest": "^25.1.0",
+    "node-sass": "^4.13.1",
     "supertest": "^4.0.2"
   }
 }
