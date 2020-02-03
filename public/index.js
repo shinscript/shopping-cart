@@ -79,6 +79,7 @@ const fetchAndSet = async () => {
       addBtn.innerHTML = "Add To Cart";
       addBtn.onclick = () => {
         itemStr += items;
+        console.log(itemStr)
         
         //Here we run the calculate function to get a new total price every time we add an item into our cart.
         if(itemStr.length > 0) {
@@ -142,7 +143,7 @@ const clear = () => {
 //Calculate Total Price functionality;
 const calculate = (str, cache) => {
   let itemCountCache = {};
-  
+  let price = 0;
   for(let i = 0; i < str.length; i += 1) {
     let item = str[i];
     if(!itemCountCache[item]) itemCountCache[item] = 1;
@@ -153,14 +154,16 @@ const calculate = (str, cache) => {
       while(itemCountCache[item] > 0) {
         if(cache[item].volume_discounts.length && itemCountCache[item] >= cache[item].volume_discounts[0].number) {
           itemCountCache[item] -= cache[item].volume_discounts[0].number;
-          totalPrice += cache[item].volume_discounts[0].price;
+          price += cache[item].volume_discounts[0].price;
         } else {
           itemCountCache[item] -= 1;
-          totalPrice += cache[item].unit_price;
+          price += cache[item].unit_price;
         }
       }
   }
-  return totalPrice;
+
+  console.log(price);
+  return price;
 }
 
 fetchAndSet();
