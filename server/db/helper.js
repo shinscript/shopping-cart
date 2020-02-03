@@ -1,7 +1,9 @@
 const helper = {};
 
+//Allows for faster call/checking;
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
+//Determines whether input is null, undefined, [], {}, or "empty";
 helper.isEmpty = (obj) => {
   if (obj === null) return true;
   if (obj.length > 0)    return false;

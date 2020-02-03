@@ -1,7 +1,18 @@
 const fs = require('fs');
+// ES6 destructuring to grab our isEmpty function; 
 const { isEmpty } = require('./helper');
 
-let readLocation;
+/*
+  Overall idea of this middleware/file is to listen for a test or dev command.
+  If we are testing our code the readLocation becomes initialized to a test JSON database;
+  If we are in Production or in this case "dev" we get our data from the dev JSON Database ("real database");
+
+  Once we get our data we set it to our itemList variable. 
+    - if a request comes in it parses the itemList object and caches our information into our "cache" variable
+      -> this allows for any further requests to read off the server-side cache rather than doing a "fetch" for
+         the information in our database everytime.
+*/
+let readLocation; 
 let itemList;
 const cache = {};
 
@@ -13,30 +24,7 @@ else itemList = JSON.parse(fs.readFileSync(readLocation));
 
 const db = {};
 
-db.calculate = (str) => {
-  let itemCountCache = {};
-  let totalPrice = 0;
-  
-  for(let i = 0; i < str.length; i += 1) {
-    let item = str[i];
-    if(!itemCountCache[item]) itemCountCache[item] = 1;
-    else itemCountCache[item] += 1;
-  }
-
-  for(let item in itemCountCache) {
-      while(itemCountCache[item] > 0) {
-        if(cache[item].volume_discounts.length && itemCountCache[item] >= cache[item].volume_discounts[0].number) {
-          itemCountCache[item] -= cache[item].volume_discounts[0].number;
-          totalPrice += cache[item].volume_discounts[0].price;
-        } else {
-          itemCountCache[item] -= 1;
-          totalPrice += cache[item].unit_price;
-        }
-      }
-  }
-  return totalPrice;
-}
-
+//.find() middleware that caches our request;
 db.find = () => {
   if(isEmpty(cache)) {
     itemList.forEach(el => {

@@ -16,10 +16,10 @@ describe('Route integration', () => {
     });
   });
 
-  describe('/items', () => {
+  describe('/api/items', () => {
     describe('GET', () => {
       it('responds with a 200 status code and application/json content type', async (done) => {
-        let res = await request.get('/items');
+        let res = await request.get('/api/items');
         expect(res.status).toBe(200);
         expect(res.headers['content-type']).toEqual("application/json; charset=utf-8");
         done();
@@ -27,30 +27,11 @@ describe('Route integration', () => {
 
       it('items from "cache" should be in the response body', async (done) => {
         let cache = find();
-        let res = await request.get('/items');
+        let res = await request.get('/api/items');
         expect(res.body).toEqual(cache);
         done();
       })
     });
   });
-
-  describe('/checkout', () => {
-    let mockCart = { ids: 'AA' }
-
-    describe('POST', () => {
-      it('accepts a json object ids & responds with a 200 status code and application/json content type', async (done) => {
-        let res = await request.post('/checkout').send(mockCart);
-        expect(res.status).toBe(200);
-        expect(res.headers['content-type']).toEqual("application/json; charset=utf-8");
-        done();
-      });
-
-      it("should accept an ids string & responds with a total price of items in the body", async (done) => {
-        let res = await request.post('/checkout').send(mockCart);
-        expect(res.body).toEqual({ 'totalPrice': 4 });
-        done();
-      });
-    })
-  })
 });
   

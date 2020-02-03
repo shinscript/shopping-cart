@@ -1,11 +1,35 @@
 const display = document.querySelector('.display');
 const cart = document.querySelector('.cart');
 
+
+/*
+  Allows for shopping cart button to show and close cart;
+*/
+const cartBtn = document.querySelector('.cart-btn');
+
+let hasBeenClicked = false;
+cart.style.display = 'none';
+cartBtn.onclick = () => {
+  if(!hasBeenClicked) {
+    cart.style.display = 'grid';
+    hasBeenClicked = true;
+  } else {
+    cart.style.display = 'none';
+    hasBeenClicked = false;
+  }
+}
+
+/*
+  Allows for user to clear and reset items in a cart;
+*/
 const clearBtn = document.createElement('button');
 clearBtn.className = "clear_btn";
 clearBtn.innerHTML = "Clear Cart";
 clearBtn.onclick = () => {
   clear();
+  cart_total_price.innerHTML = "";
+  totalPrice = 0;
+  itemStr = "";
 }
 
 const cart_ctn = document.createElement('div');
@@ -18,12 +42,21 @@ cart.appendChild(cart_total_price);
 
 cart.appendChild(clearBtn);
 
-let itemStr = "";
+let itemStr = ""; //Initial String value to contain the Id's for each item when added into cart.
+let totalPrice = 0; //Initial Total price value;
 
+
+/*
+  In the fetchAndSet function we are calling an async function that does a fetch request to our API,
+  gets the information from the response and creates a DIV || item container for each item we get.
+
+  It creates all the parent & child nodes + the add_to_cart button for each item.
+
+*/
 const fetchAndSet = async () => {
 
   try {
-    let res = await fetch('http://localhost:3000/items');
+    let res = await fetch('http://localhost:3000/api/items');
     res = await res.json();
     for(let items in res) {
       const item_ctn = document.createElement('div');
@@ -46,21 +79,14 @@ const fetchAndSet = async () => {
       addBtn.innerHTML = "Add To Cart";
       addBtn.onclick = () => {
         itemStr += items;
-      
-        let totalPrice;
+        
+        //Here we run the calculate function to get a new total price every time we add an item into our cart.
         if(itemStr.length > 0) {
-          fetch('http://localhost:3000/checkout', {
-            method: 'POST',
-            body: JSON.stringify({ids: itemStr}),
-            headers: { 'Content-Type': 'application/json' }
-          })
-          .then(res => res.json())
-          .then(data => {
-            totalPrice = data.totalPrice
-            cart_total_price.innerHTML = `$${totalPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-          });
+          totalPrice = calculate(itemStr, res);
+          cart_total_price.innerHTML = `Total Price : $${totalPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
         }
         
+        // Then we create a parent & child node inside of the cart for each item added.
         const cart_item_ctn = document.createElement('div');
         cart_item_ctn.className = "cart_item_ctn"
         
@@ -78,30 +104,63 @@ const fetchAndSet = async () => {
         cart_ctn.appendChild(cart_item_ctn);
       }
 
+      const item_discount = document.createElement('p');
+      item_discount.className = 'item_discount'
+
+      //Here we display the discounts IF they are available. If an item has no discount then we just display "no discount".
+      if(res[items].volume_discounts[0]) {
+        item_discount.innerHTML = `Buy ${res[items].volume_discounts[0].number} for ${(res[items].volume_discounts[0].price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+      } else item_discount.innerHTML = 'No Discount';
+
+      
+      item_ctn.appendChild(item_discount)
+
       item_ctn.appendChild(item_showcase);
       item_ctn.appendChild(item_name);
       item_ctn.appendChild(item_price);
       item_ctn.appendChild(addBtn);
 
-      if(res[items].volume_discounts[0]) {
-        const item_discount = document.createElement('p');
-        item_discount.className = 'item_discount';
-        item_discount.innerHTML = `Buy ${res[items].volume_discounts[0].number} for ${(res[items].volume_discounts[0].price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-
-        item_ctn.appendChild(item_discount);
-      }
-
       display.appendChild(item_ctn);
     }
-  } catch (err) {
+
+  /*
+    If the server sends a server error we console.error the error. 
+    Best practice is to display some 404 page and/or show the user something went wrong on the server's end.
+  */
+  } catch (err) { 
     if(err) console.error(err);
   }
 }
 
+//Clear Btn functionailty;
 const clear = () => {
   while(cart_ctn.firstChild) {
     cart_ctn.removeChild(cart_ctn.firstChild);
   }
+}
+
+//Calculate Total Price functionality;
+const calculate = (str, cache) => {
+  let itemCountCache = {};
+  
+  for(let i = 0; i < str.length; i += 1) {
+    let item = str[i];
+    if(!itemCountCache[item]) itemCountCache[item] = 1;
+    else itemCountCache[item] += 1;
+  }
+
+  for(let item in itemCountCache) {
+      while(itemCountCache[item] > 0) {
+        if(cache[item].volume_discounts.length && itemCountCache[item] >= cache[item].volume_discounts[0].number) {
+          itemCountCache[item] -= cache[item].volume_discounts[0].number;
+          totalPrice += cache[item].volume_discounts[0].price;
+        } else {
+          itemCountCache[item] -= 1;
+          totalPrice += cache[item].unit_price;
+        }
+      }
+  }
+  return totalPrice;
 }
 
 fetchAndSet();

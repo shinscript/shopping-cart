@@ -1,7 +1,7 @@
 const { isEmpty } = require('./helper');
 const db = require('./items');
 
-describe('Helper Functions', () => {
+describe('Helper Functions & Middlewares', () => {
   describe('isEmpty', () => {
     it('returns true if input is an empty array, empty object, null, or not an object', () => {
       expect(isEmpty([])).toBe(true);
@@ -27,18 +27,4 @@ describe('Db Controllers', () => {
       expect(db.find()).toEqual(mockCache);
     });
   });
-
-  describe('db.calculate()', () => {
-    it('takes in a string & returns a number', () => {
-      expect(typeof db.calculate('AA')).toEqual('number');
-    });
-
-    it('Adds up total price of items', () => {
-      expect(db.calculate('AAA')).toBe(6);
-    });
-
-    it('Adds up total price of items with discounts applied', () => {
-      expect(db.calculate('AAAA')).toBe(7.0);
-    });
-  })
 })

@@ -1,0 +1,112 @@
+body {
+  display: grid;
+  grid-template-areas: "n n n"
+                       "d d c"
+                       "d d c";
+  background-color: gainsboro;
+  text-align: center;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+}
+
+nav {
+  grid-area: n;
+  top: 0;
+  background-color: grey;
+  width: 100%;
+  height: 3rem;
+  position: sticky;
+}
+
+.cart-btn {
+  border: none;
+  background-color: transparent;
+  float: right;
+  margin: auto;
+  outline: none;
+}
+
+.cart-img {
+  margin: .1rem .3rem;
+  height: 42px;
+}
+
+.cart {
+  grid-area: c;
+  display: grid;
+  grid-template-rows: 4fr 1fr 1fr;
+  float: right;
+  background-color: teal;
+}
+
+.cart_item_ctn {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: tomato;
+  margin: 3rem auto;
+}
+
+.cart_total_price {
+  margin: auto;
+}
+
+.clear_btn {
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: medium;
+  margin: auto;
+}
+
+.display {
+  grid-area: d;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: repeat(auto-fill, 1fr);
+  grid-gap: 1rem;
+  max-width: 80%;
+  margin: 5rem;
+}
+
+.item_ctn {
+  display: grid;
+  grid-template-areas: "sc sc"
+                       "sc sc"
+                       "n p"
+                       "btn disc";
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: auto;
+}
+
+.item_showcase {
+  grid-area: sc;
+  border-bottom: 1px solid black;
+  font-size: 5rem;
+  padding: 5rem;
+  margin: auto;
+}
+
+.item_name {
+  grid-area: n;
+}
+
+.item_price {
+  grid-area: p;
+}
+
+.add_btn {
+  grid-area: btn;
+  background-color: rgb(121, 246, 255);
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: small;
+  font-weight: 500;
+  margin: auto;
+  width: 5rem;
+}
+
+.item_discount {
+  grid-area: disc;
+}
